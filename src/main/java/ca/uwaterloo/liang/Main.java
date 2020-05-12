@@ -1,5 +1,6 @@
 package ca.uwaterloo.liang;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import soot.PackManager;
 import soot.Scene;
@@ -20,9 +22,7 @@ import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.CallGraphBuilder;
 import soot.jimple.toolkits.callgraph.Edge;
 import soot.options.Options;
-import soot.tagkit.AnnotationElem;
 import soot.tagkit.AnnotationTag;
-import soot.tagkit.VisibilityAnnotationTag;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
@@ -31,10 +31,14 @@ public class Main {
 			     });
 		 Options.v().set_prepend_classpath(true);                                                                                 
 		 Options.v().set_verbose(true);                                                                                            
-		 List<String> pd = new ArrayList<>();                                                                                   
-		 pd.add("-process-dir");                                                                                                  
-		 pd.add(args[0]);                                                                                                       
-		 Options.v().set_soot_classpath(args[1]);                                                                                  
+		 List<String> pd = new ArrayList<>();
+		 pd.add("-process-dir");
+		 System.out.println("args[0]: " + args[0]);
+		 System.out.println("args[1]: " + args[1]);
+		 pd.add(args[0]);
+		 pd.add("-process-dir");
+		 pd.add(args[1]);
+		 Options.v().set_soot_classpath(args[2]);                                                                                  
 		 Options.v().set_whole_program(true);                                                                                      
 		 soot.Main.main(pd.toArray(new String[0]));
 	}
@@ -62,6 +66,7 @@ public class Main {
 	    	
 	    	while (classIt.hasNext()) {
 	    	    SootClass appClass = (SootClass) classIt.next();
+	    	    // System.out.println("SootClass Package: " + appClass.getPackageName() + ", SootClass Name: " + appClass.getName());
 	    	    Iterator<SootMethod> mIt = appClass.getMethods().iterator();
 	    	    while (mIt.hasNext()) {
 	    	      SootMethod sm = (SootMethod) mIt.next();
@@ -74,10 +79,11 @@ public class Main {
 	    	        if (callSite == null) {
 	    	          continue;
 	    	        }
-	    	        SootMethod target = e.tgt();
-	    	        if (isTestCase(target)) {
+	    	        SootMethod srcMethod = e.src();
+	    	        // System.out.println("SootMethod " + srcMethod.getSubSignature() + " called " + sm.getSubSignature());
+	    	        if (isTestCase(srcMethod)) {
 	    	          count++;
-	    	          listOfTestsCalled.add(target);
+	    	          listOfTestsCalled.add(srcMethod);
 	    	        }
 	    	      }
 	    	      if (count > 1) {
@@ -87,24 +93,40 @@ public class Main {
 	    	      listOfTestsCalled = new ArrayList<SootMethod>();
 	    	    }
 	    	}
+	  		System.out.println("Helper Method size: " + helpersMap.size());
+	  		for (Entry<SootMethod, List<SootMethod>> entry: helpersMap.entrySet()) {
+				 System.out.println("Helper Method Class: " + entry.getKey().getDeclaringClass().getName() + ", Helper Method name: " + entry.getKey().getSubSignature());
+				 List<SootMethod> sootMethodList = entry.getValue();
+		  		 for (SootMethod sm: sootMethodList) {
+		  			System.out.println("Test Case Class: " + sm.getDeclaringClass().getName() + ", Test Case Called the Helper Method: " + sm.getSubSignature());
+		  		 }
+		  		System.out.println();
+			}
 	    }
 	}
 	
 	private static boolean isTestCase(SootMethod sm) {		
-		boolean isTest = false;		
-		if (sm.getName().startsWith("test"))
+		boolean isTest = false;
+		// System
+		if (sm.getName().startsWith("test") && sm.getDeclaringClass().getName().contains("Test")) {
+			System.out.println("Test case found: " + sm.getSubSignature());
 			return true;
-		VisibilityAnnotationTag tag = (VisibilityAnnotationTag) sm.getTag("VisibilityAnnotationTag");
+		}
+		AnnotationTag tag = (AnnotationTag) sm.getTag("AnnotationTag");
 		if (tag != null) {
-		    for (AnnotationTag annotation : tag.getAnnotations()) {
-		    	List<AnnotationElem> elemsList = new ArrayList<AnnotationElem>(annotation.getElems());
-		        for (AnnotationElem elem: elemsList) {
-		        	System.out.println(elem.toString());
-		        	if (elem.getName().contains("Test"))
-		        		isTest = true;
-		        	break;
-		        }
-		    }
+			System.out.println("VisibilityAnnotationTag: " + tag.toString());
+//			if (tag.getType().equals(""))
+//		    for (AnnotationTag annotation : tag.getAnnotations()) {
+//		    	List<AnnotationElem> elemsList = new ArrayList<AnnotationElem>(annotation.getElems());
+//		        for (AnnotationElem elem: elemsList) {
+//		        	System.out.println(elem.toString());
+//		        	if (elem.getName().contains("Test")) {
+//		        		isTest = true;
+//		        		System.out.println("Test case found: " + sm.getSignature());
+//		        	}
+//		        	break;
+//		        }
+//		    }
 		}
 		return isTest;
 	}
