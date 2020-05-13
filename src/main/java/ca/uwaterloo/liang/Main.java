@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import soot.Kind;
 import soot.PackManager;
 import soot.Scene;
 import soot.SceneTransformer;
@@ -30,16 +31,16 @@ public class Main {
 			     new Transform("wjtp.myTransform", HelperMethodTransformer.v()) {
 			     });
 		 Options.v().set_prepend_classpath(true);                                                                                 
-		 Options.v().set_verbose(true);                                                                                            
+		 Options.v().set_verbose(true);
+		 Options.v().set_whole_program(true);
 		 List<String> pd = new ArrayList<>();
-		 pd.add("-process-dir");
 		 System.out.println("args[0]: " + args[0]);
 		 System.out.println("args[1]: " + args[1]);
+		 pd.add("-process-dir");
 		 pd.add(args[0]);
 		 pd.add("-process-dir");
 		 pd.add(args[1]);
-		 Options.v().set_soot_classpath(args[2]);                                                                                  
-		 Options.v().set_whole_program(true);                                                                                      
+		 Options.v().set_soot_classpath(args[2]);                                                                                                                                                                        
 		 soot.Main.main(pd.toArray(new String[0]));
 	}
 	
@@ -56,7 +57,9 @@ public class Main {
 	    	Map<SootMethod, List<SootMethod>> helpersMap = new HashMap<SootMethod, List<SootMethod>>();
 
 	    	Iterator<SootClass> classIt = Scene.v().getApplicationClasses().iterator();
+	    	
 	    	if (Scene.v().hasCallGraph()) {
+	    		//System.out.println("Scene's call graph: " + Scene.v().getCallGraph().toString());
 	    	    cg = Scene.v().getCallGraph();
 	    	} else {
 	    	    new CallGraphBuilder().build();
@@ -66,27 +69,40 @@ public class Main {
 	    	
 	    	while (classIt.hasNext()) {
 	    	    SootClass appClass = (SootClass) classIt.next();
-	    	    // System.out.println("SootClass Package: " + appClass.getPackageName() + ", SootClass Name: " + appClass.getName());
+	    	    System.out.println("SootClass Visited: " + appClass.toString());
+	    	    if (!appClass.isConcrete())
+	    	    	continue;
+	    	    System.out.println("Concrete SootClass Package: " + appClass.getPackageName() + ", SootClass Name: " + appClass.getName());
 	    	    Iterator<SootMethod> mIt = appClass.getMethods().iterator();
 	    	    while (mIt.hasNext()) {
 	    	      SootMethod sm = (SootMethod) mIt.next();
 	    	      if (sm.isAbstract() && sm.isNative())
 	    	        continue;
+	    	      System.out.println("SootMethod " + sm.getSubSignature() + " is visited in SootClass " + appClass.getName());
+	    	      if (!sm.getSubSignature().contains("boolean isValidInteger(ca.uwaterloo.liang.MethodHelper,int,int)"))
+	    	    	  continue;
 	    	      Iterator<Edge> it = cg.edgesInto(sm);
+	    	      
+	    	      
+//	    	      if (it.hasNext())
+//	    	    	  //System.out.println("bingo!");
 	    	      while (it.hasNext()) {
+	    	    	System.out.println("Edge Iterator: " + (Edge) it.next());
 	    	        Edge e = (Edge) it.next();
-	    	        Stmt callSite = e.srcStmt();
-	    	        if (callSite == null) {
-	    	          continue;
-	    	        }
+//	    	        if (e.kind() != Kind.STATIC)
+//	    	        	continue;
+//	    	        Stmt callSite = e.srcStmt();
+//	    	        if (callSite == null) {
+//	    	          continue;
+//	    	        }
 	    	        SootMethod srcMethod = e.src();
-	    	        // System.out.println("SootMethod " + srcMethod.getSubSignature() + " called " + sm.getSubSignature());
+	    	        System.out.println("SootMethod " + srcMethod.getSubSignature() + " called " + sm.getSubSignature());
 	    	        if (isTestCase(srcMethod)) {
 	    	          count++;
 	    	          listOfTestsCalled.add(srcMethod);
 	    	        }
 	    	      }
-	    	      if (count > 1) {
+	    	      if (count >= 1) {
 	    	        helpersMap.put(sm, listOfTestsCalled);
 	    	      }
 	    	      count = 0;
@@ -108,7 +124,7 @@ public class Main {
 	private static boolean isTestCase(SootMethod sm) {		
 		boolean isTest = false;
 		// System
-		if (sm.getName().startsWith("test") && sm.getDeclaringClass().getName().contains("Test")) {
+		if (sm.getName().startsWith("test")) {
 			System.out.println("Test case found: " + sm.getSubSignature());
 			return true;
 		}
@@ -131,3 +147,5 @@ public class Main {
 		return isTest;
 	}
 }
+
+//&& sm.getDeclaringClass().getName().contains("Test")

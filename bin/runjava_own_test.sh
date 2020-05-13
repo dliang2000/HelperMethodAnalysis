@@ -5,7 +5,7 @@ MACHINE_SPECIFIC_PATH="$HOME/Graduation_Studies/ThesisWork"
 SOOT_JAR="$MACHINE_SPECIFIC_PATH/soot_jar/sootclasses-trunk-jar-with-dependencies.jar"
 JAVA_PATH="$MACHINE_SPECIFIC_PATH/HelperMethodAnalysis/target/classes"
 CC_CLASS="ca.uwaterloo.liang.Main"
-BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/OpenSourceProjects/Benchmarks/jsoup-jsoup-1.10.1-patched"
+BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/OpenSourceProjects/Benchmarks/TemporaryTest"
 TARGET_PATH="target/classes"
 TARGET_TEST_PATH="target/test-classes"
 

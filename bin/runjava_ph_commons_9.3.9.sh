@@ -5,11 +5,11 @@ MACHINE_SPECIFIC_PATH="$HOME/Graduation_Studies/ThesisWork"
 SOOT_JAR="$MACHINE_SPECIFIC_PATH/soot_jar/sootclasses-trunk-jar-with-dependencies.jar"
 JAVA_PATH="$MACHINE_SPECIFIC_PATH/HelperMethodAnalysis/target/classes"
 CC_CLASS="ca.uwaterloo.liang.Main"
-BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/OpenSourceProjects/Benchmarks/jsoup-jsoup-1.10.1-patched"
-TARGET_PATH="target/classes"
-TARGET_TEST_PATH="target/test-classes"
+BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/OpenSourceProjects/Benchmarks/ph-commons-ph-commons-parent-pom-9.3.9-patched"
+TARGET_PATH="ph-commons/target/classes"
+TARGET_TEST_PATH="ph-commons/target/test-classes"
 
-MVN_DEPENDENCY_PATH="$BENCHMARK_PATH/mvn_dependencies"
+MVN_DEPENDENCY_PATH="$BENCHMARK_PATH/ph-commons/mvn_dependencies"
 
 # add all the jar files needed for set_soot_classpath
 for jar in $MVN_DEPENDENCY_PATH/*; do
@@ -25,4 +25,5 @@ if [ -a is_maven ]; then
   mvn clean test
 fi
 
+echo java -cp $SOOT_JAR:$JAVA_PATH $CC_CLASS $BENCHMARK_PATH/$TARGET_PATH $BENCHMARK_PATH/$TARGET_TEST_PATH $jars`cat benchmark_class_path`:$JAR_PATH
 java -cp $SOOT_JAR:$JAVA_PATH $CC_CLASS $BENCHMARK_PATH/$TARGET_PATH $BENCHMARK_PATH/$TARGET_TEST_PATH $jars`cat benchmark_class_path`:$JAR_PATH
