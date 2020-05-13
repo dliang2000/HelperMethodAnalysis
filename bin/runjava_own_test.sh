@@ -1,11 +1,11 @@
 #!/bin/bash
 #under msp everything should be identical on all computers
-MACHINE_SPECIFIC_PATH="$HOME/Graduation_Studies/ThesisWork"
+MACHINE_SPECIFIC_PATH="$HOME/hacking/"
 
-SOOT_JAR="$MACHINE_SPECIFIC_PATH/soot_jar/sootclasses-trunk-jar-with-dependencies.jar"
+SOOT_JAR="$MACHINE_SPECIFIC_PATH/HelperMethodAnalysis/soot_jar/sootclasses-trunk-jar-with-dependencies.jar"
 JAVA_PATH="$MACHINE_SPECIFIC_PATH/HelperMethodAnalysis/target/classes"
 CC_CLASS="ca.uwaterloo.liang.Main"
-BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/OpenSourceProjects/Benchmarks/TemporaryTest"
+BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/HelperMethodAnalysis/Benchmarks/TemporaryTest"
 TARGET_PATH="target/classes"
 TARGET_TEST_PATH="target/test-classes"
 

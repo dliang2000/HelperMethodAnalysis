@@ -34,8 +34,9 @@ public class Main {
 		 Options.v().set_verbose(true);
 		 Options.v().set_whole_program(true);
 		 List<String> pd = new ArrayList<>();
-		 System.out.println("args[0]: " + args[0]);
-		 System.out.println("args[1]: " + args[1]);
+		 //System.out.println("args[0]: " + args[0]);
+		 //System.out.println("args[1]: " + args[1]);
+         pd.add("-main-class"); pd.add("ca.uwaterloo.liang.Driver");
 		 pd.add("-process-dir");
 		 pd.add(args[0]);
 		 pd.add("-process-dir");
@@ -79,8 +80,8 @@ public class Main {
 	    	      if (sm.isAbstract() && sm.isNative())
 	    	        continue;
 	    	      System.out.println("SootMethod " + sm.getSubSignature() + " is visited in SootClass " + appClass.getName());
-	    	      if (!sm.getSubSignature().contains("boolean isValidInteger(ca.uwaterloo.liang.MethodHelper,int,int)"))
-	    	    	  continue;
+	    	      //if (!sm.getSubSignature().contains("boolean isValidInteger(ca.uwaterloo.liang.MethodHelper,int,int)"))
+	    	    	//  continue;
 	    	      Iterator<Edge> it = cg.edgesInto(sm);
 	    	      
 	    	      

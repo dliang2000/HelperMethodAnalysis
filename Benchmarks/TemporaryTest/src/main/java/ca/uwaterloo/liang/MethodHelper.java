@@ -1,6 +1,7 @@
 package ca.uwaterloo.liang;
 
 public class MethodHelper {
+    public static void main(String[] argv) { MethodHelper.isValidInteger(null, 0, 0); }
 	private int hold;
 	public MethodHelper(int hold) {
 	    this.hold = hold;
