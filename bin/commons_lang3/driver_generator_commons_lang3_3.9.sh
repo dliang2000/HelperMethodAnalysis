@@ -2,15 +2,14 @@
 #under msp everything should be identical on all computers
 MACHINE_SPECIFIC_PATH="$HOME/Graduation_Studies/ThesisWork/HelperMethodAnalysis"
 
-PACKAGE="ca.uwaterloo.liang"
+PACKAGE="org.apache.commons.lang3"
 SOOT_JAR="$MACHINE_SPECIFIC_PATH/soot_jar/sootclasses-trunk-jar-with-dependencies.jar"
 JAVA_PATH="$MACHINE_SPECIFIC_PATH/target/classes"
-CC_CLASS="ca.uwaterloo.liang.Main"
-BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/Benchmarks/TemporaryTest"
-TARGET_PATH="target/classes"
+CC_CLASS="ca.uwaterloo.liang.DriverGenerator"
+BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/Benchmarks/commons-lang3-3.9-src"
 TARGET_TEST_PATH="target/test-classes"
-BENCHMARK="own_test"
-DRIVER_PATH="ca.uwaterloo.liang.Driver"
+DESTINATION="$BENCHMARK_PATH/src/test/java/org/apache/commons/lang3"
+BENCHMARK="commons_lang3_3.9"
 OUTPUT_PATH="$MACHINE_SPECIFIC_PATH/analysis_output"
 
 MVN_DEPENDENCY_PATH="$BENCHMARK_PATH/mvn_dependencies"
@@ -26,8 +25,10 @@ cd $BENCHMARK_PATH
 # touch is_maven in the benchmark directory to indicate that a benchmark is mvn
 if [ -a is_maven ]; then
   echo "it is a maven project"
+  rm -rf is_maven
   mvn clean test
 fi
 
-java -cp $SOOT_JAR:$JAVA_PATH $CC_CLASS $DRIVER_PATH $BENCHMARK_PATH/$TARGET_PATH $BENCHMARK_PATH/$TARGET_TEST_PATH $jars`cat benchmark_class_path`:$JAR_PATH $BENCHMARK $OUTPUT_PATH
+java -cp $SOOT_JAR:$JAVA_PATH $CC_CLASS $BENCHMARK_PATH/$TARGET_TEST_PATH $jars$TARGET_TEST_PATH:$JAR_PATH $PACKAGE $DESTINATION $BENCHMARK $OUTPUT_PATH
 rm -rf "sootOutput/"
+touch is_maven

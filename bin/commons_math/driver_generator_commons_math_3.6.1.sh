@@ -1,15 +1,16 @@
 #!/bin/bash
 #under msp everything should be identical on all computers
-MACHINE_SPECIFIC_PATH="$HOME/Graduation_Studies/ThesisWork"
+MACHINE_SPECIFIC_PATH="$HOME/Graduation_Studies/ThesisWork/HelperMethodAnalysis"
 
 PACKAGE="org.apache.commons.math3"
 SOOT_JAR="$MACHINE_SPECIFIC_PATH/soot_jar/sootclasses-trunk-jar-with-dependencies.jar"
-JAVA_PATH="$MACHINE_SPECIFIC_PATH/HelperMethodAnalysis/target/classes"
+JAVA_PATH="$MACHINE_SPECIFIC_PATH/target/classes"
 CC_CLASS="ca.uwaterloo.liang.DriverGenerator"
-BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/OpenSourceProjects/Benchmarks/commons-math-MATH_3_6_1"
+BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/Benchmarks/commons-math-MATH_3_6_1"
 TARGET_TEST_PATH="target/test-classes"
 DESTINATION="$BENCHMARK_PATH/src/test/java/org/apache/commons/math3"
 BENCHMARK="commons_math_3.6.1"
+OUTPUT_PATH="$MACHINE_SPECIFIC_PATH/analysis_output"
 
 MVN_DEPENDENCY_PATH="$BENCHMARK_PATH/mvn_dependencies"
 
@@ -27,5 +28,5 @@ if [ -a is_maven ]; then
   mvn clean test
 fi
 
-java -cp $SOOT_JAR:$JAVA_PATH $CC_CLASS $BENCHMARK_PATH/$TARGET_TEST_PATH $jars`cat benchmark_class_path`:$JAR_PATH $PACKAGE $DESTINATION $BENCHMARK
+java -cp $SOOT_JAR:$JAVA_PATH $CC_CLASS $BENCHMARK_PATH/$TARGET_TEST_PATH $jars`cat benchmark_class_path`:$JAR_PATH $PACKAGE $DESTINATION $BENCHMARK $OUTPUT_PATH
 rm -rf "sootOutput/"

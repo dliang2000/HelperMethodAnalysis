@@ -1,13 +1,17 @@
 #!/bin/bash
 #under msp everything should be identical on all computers
-MACHINE_SPECIFIC_PATH="$HOME/Graduation_Studies/ThesisWork"
+MACHINE_SPECIFIC_PATH="$HOME/Graduation_Studies/ThesisWork/HelperMethodAnalysis"
 
+PACKAGE="org.apache.commons.io"
 SOOT_JAR="$MACHINE_SPECIFIC_PATH/soot_jar/sootclasses-trunk-jar-with-dependencies.jar"
-JAVA_PATH="$MACHINE_SPECIFIC_PATH/HelperMethodAnalysis/target/classes"
+JAVA_PATH="$MACHINE_SPECIFIC_PATH/target/classes"
 CC_CLASS="ca.uwaterloo.liang.Main"
-BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/OpenSourceProjects/Benchmarks/joda-time-2.10-original"
+BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/Benchmarks/commons-io-2.5-original"
 TARGET_PATH="target/classes"
 TARGET_TEST_PATH="target/test-classes"
+BENCHMARK="commons_io_2.5"
+DRIVER_PATH="org.apache.commons.io.Driver"
+OUTPUT_PATH="$MACHINE_SPECIFIC_PATH/analysis_output"
 
 MVN_DEPENDENCY_PATH="$BENCHMARK_PATH/mvn_dependencies"
 
@@ -25,5 +29,5 @@ if [ -a is_maven ]; then
   mvn clean test
 fi
 
-echo java -cp $SOOT_JAR:$JAVA_PATH $CC_CLASS $BENCHMARK_PATH/$TARGET_PATH $BENCHMARK_PATH/$TARGET_TEST_PATH $jars`cat benchmark_class_path`:$JAR_PATH
-java -cp $SOOT_JAR:$JAVA_PATH $CC_CLASS $BENCHMARK_PATH/$TARGET_PATH $BENCHMARK_PATH/$TARGET_TEST_PATH $jars`cat benchmark_class_path`:$JAR_PATH
+java -cp $SOOT_JAR:$JAVA_PATH $CC_CLASS $DRIVER_PATH $BENCHMARK_PATH/$TARGET_PATH $BENCHMARK_PATH/$TARGET_TEST_PATH $jars`cat benchmark_class_path`:$JAR_PATH $BENCHMARK $OUTPUT_PATH
+rm -rf "sootOutput/"
