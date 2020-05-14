@@ -2,15 +2,15 @@
 #under msp everything should be identical on all computers
 MACHINE_SPECIFIC_PATH="$HOME/Graduation_Studies/ThesisWork/HelperMethodAnalysis"
 
-PACKAGE="ca.uwaterloo.liang"
+PACKAGE="org.apache.commons.collections4"
 SOOT_JAR="$MACHINE_SPECIFIC_PATH/soot_jar/sootclasses-trunk-jar-with-dependencies.jar"
 JAVA_PATH="$MACHINE_SPECIFIC_PATH/target/classes"
 CC_CLASS="ca.uwaterloo.liang.Main"
-BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/Benchmarks/TemporaryTest"
+BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/Benchmarks/commons-collections-collections-4.3"
 TARGET_PATH="target/classes"
 TARGET_TEST_PATH="target/test-classes"
-BENCHMARK="own_test"
-DRIVER_PATH="ca.uwaterloo.liang.Driver"
+BENCHMARK="commons_collections_4.3"
+DRIVER_PATH="org.apache.commons.collections4.Driver"
 OUTPUT_PATH="$MACHINE_SPECIFIC_PATH/analysis_output"
 
 MVN_DEPENDENCY_PATH="$BENCHMARK_PATH/mvn_dependencies"

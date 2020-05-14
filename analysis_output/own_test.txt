@@ -1,0 +1,6 @@
+Number of Helper Methods Called multiple times from different test cases: 1
+Helper Method Class: ca.uwaterloo.liang.MethodHelper, Helper Method name: boolean isValidInteger(ca.uwaterloo.liang.MethodHelper,int,int)
+	Test Case Class: ca.uwaterloo.liang.MethodHelperTest, Test Case that called the Helper Method: void test2()
+	Test Case Class: ca.uwaterloo.liang.MethodHelperTest, Test Case that called the Helper Method: void test1()
+
+Number of Helper Methods Called multiple times from the same test case: 0

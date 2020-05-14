@@ -6,10 +6,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import soot.Kind;
 import soot.PackManager;
@@ -27,6 +29,7 @@ import soot.tagkit.AnnotationTag;
 
 public class Main {
 	private static String benchmark;
+	private static String output_path;
 	public static void main(String[] args) throws IOException {
 		 PackManager.v().getPack("wjtp").add(
 			     new Transform("wjtp.myTransform", HelperMethodTransformer.v()) {
@@ -35,8 +38,8 @@ public class Main {
 		 Options.v().set_verbose(true);
 		 Options.v().set_whole_program(true);
 		 List<String> pd = new ArrayList<>();
-		 //System.out.println("args[0]: " + args[0]);
-		 //System.out.println("args[1]: " + args[1]);
+		 System.out.println("args[0]: " + args[0]);
+		 System.out.println("args[1]: " + args[1]);
          pd.add("-main-class"); 
          pd.add(args[0]);
 		 pd.add("-process-dir");
@@ -45,6 +48,7 @@ public class Main {
 		 pd.add(args[2]);
 		 Options.v().set_soot_classpath(args[3]);
 		 Main.benchmark = args[4];
+		 Main.output_path = args[5];
 		 soot.Main.main(pd.toArray(new String[0]));
 	}
 	
@@ -54,12 +58,13 @@ public class Main {
 		public static HelperMethodTransformer v() { return instance; }
 	    @Override
 		protected void internalTransform(String phaseName, Map options) {
-	    	final String output_path = "/home/daveroar/Graduation_Studies/ThesisWork/HelperMethodAnalysis/analysis_output";
 	    	CHATransformer.v().transform();
 	    	CallGraph cg;
 	    	int count = 0;
 	    	List<SootMethod> listOfTestsCalled = new ArrayList<SootMethod>();
-	    	Map<SootMethod, List<SootMethod>> helpersMap = new HashMap<SootMethod, List<SootMethod>>();
+	    	Set<SootMethod> setOfTestsCalled = new HashSet<SootMethod>();
+	    	Map<SootMethod, List<SootMethod>> helpersListMap = new HashMap<SootMethod, List<SootMethod>>();
+	    	Map<SootMethod, Set<SootMethod>> helpersSetMap = new HashMap<SootMethod, Set<SootMethod>>();
 
 	    	Iterator<SootClass> classIt = Scene.v().getApplicationClasses().iterator();
 	    	
@@ -81,7 +86,7 @@ public class Main {
 	    	    Iterator<SootMethod> mIt = appClass.getMethods().iterator();
 	    	    while (mIt.hasNext()) {
 	    	      SootMethod sm = (SootMethod) mIt.next();
-	    	      if (sm.isAbstract() && sm.isNative())
+	    	      if (sm.isAbstract() || sm.isNative() || sm.isConstructor() || sm.isStaticInitializer())
 	    	        continue;
 	    	      System.out.println("SootMethod " + sm.getSubSignature() + " is visited in SootClass " + appClass.getName());
 	    	      Iterator<Edge> it = cg.edgesInto(sm);
@@ -93,22 +98,33 @@ public class Main {
 	    	        SootMethod srcMethod = e.src();
 	    	        System.out.println("SootMethod " + srcMethod.getSubSignature() + " called " + sm.getSubSignature());
 	    	        if (isTestCase(srcMethod)) {
-	    	          count++;
 	    	          listOfTestsCalled.add(srcMethod);
+	    	          setOfTestsCalled.add(srcMethod);
 	    	        }
 	    	      }
-	    	      if (count > 1) {
-	    	        helpersMap.put(sm, listOfTestsCalled);
+	    	      if (setOfTestsCalled.size() > 1) {
+	    	    	  helpersSetMap.put(sm, setOfTestsCalled);
+	    	      } else if (listOfTestsCalled.size() > 1) {
+	    	    	  helpersListMap.put(sm, listOfTestsCalled);
 	    	      }
-	    	      count = 0;
 		    	  listOfTestsCalled = new ArrayList<SootMethod>();
+		    	  setOfTestsCalled = new HashSet<SootMethod>();
 	    	    }
 	    	}
 	        try {
 	        	BufferedWriter writer = new BufferedWriter(new FileWriter(output_path+"/"+benchmark+".txt"));
 	        	StringBuilder sb = new StringBuilder();
-	        	sb.append("Helper Method size: " + helpersMap.size() + "\n");
-	        	for (Entry<SootMethod, List<SootMethod>> entry: helpersMap.entrySet()) {
+	        	sb.append("Number of Helper Methods Called multiple times from different test cases: " + helpersSetMap.size() + "\n");
+				for (Entry<SootMethod, Set<SootMethod>> entry: helpersSetMap.entrySet()) {
+	        		sb.append("Helper Method Class: " + entry.getKey().getDeclaringClass().getName() + ", Helper Method name: " + entry.getKey().getSubSignature()+"\n");
+	        		Set<SootMethod> sootMethodSet = entry.getValue();
+	        		for (SootMethod sm: sootMethodSet) {
+	        			sb.append("\tTest Case Class: " + sm.getDeclaringClass().getName() + ", Test Case that called the Helper Method: " + sm.getSubSignature() +"\n");
+	        		}
+	        	}
+				
+				sb.append("\nNumber of Helper Methods Called multiple times from the same test case: " + helpersListMap.size() + "\n");
+				for (Entry<SootMethod, List<SootMethod>> entry: helpersListMap.entrySet()) {
 	        		sb.append("Helper Method Class: " + entry.getKey().getDeclaringClass().getName() + ", Helper Method name: " + entry.getKey().getSubSignature()+"\n");
 	        		List<SootMethod> sootMethodList = entry.getValue();
 	        		for (SootMethod sm: sootMethodList) {

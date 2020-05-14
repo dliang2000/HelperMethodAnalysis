@@ -20,6 +20,7 @@ public class DriverGenerator {
 	private static String packagename;
 	private static String destination;
 	private static String benchmark;
+	private static String output_path;
 	public static void main(String[] args) throws IOException {
 		PackManager.v().getPack("wjtp").add(
 		     new Transform("wjtp.myTransform", DriverTransformer.v()) {
@@ -34,6 +35,7 @@ public class DriverGenerator {
 		DriverGenerator.packagename = args[2];
 		DriverGenerator.destination = args[3];
 		DriverGenerator.benchmark = args[4];
+		DriverGenerator.output_path = args[5];
 		soot.Main.main(pd.toArray(new String[0]));
 	}
 	
@@ -43,7 +45,6 @@ public class DriverGenerator {
 		public static DriverTransformer v() { return instance; }
 	    @Override
 		protected void internalTransform(String phaseName, Map options) {
-	    	final String output_path = "/home/daveroar/Graduation_Studies/ThesisWork/HelperMethodAnalysis/analysis_output";
 	    	StringBuilder sb = driverHeader(packagename);
 	    	StringBuilder sb2 = new StringBuilder();
 	        try {
@@ -59,7 +60,7 @@ public class DriverGenerator {
 	        		SootClass appClass = (SootClass) classIt.next();
 	        		System.out.println("SootClass Visited: " + appClass.toString());
 	        		// skip classes that are not concrete, and classes that are private (which would contain a "$" sign)
-	        		if (!appClass.isConcrete() || !appClass.getName().endsWith("Test") || appClass.getName().contains("$"))
+	        		if (!appClass.isConcrete() || !appClass.getName().contains("Test") || appClass.getName().contains("$"))
 	        			continue;
 	        		System.out.println("Concrete SootClass Package: " + appClass.getPackageName() + ", SootClass Name: " + appClass.getName());
 	        		for (SootMethod sm: appClass.getMethods()) {
@@ -89,7 +90,7 @@ public class DriverGenerator {
 	        				sb.append("\t\t\t" + class_var + "." + sm.getName()+"();\n");
 	        				sb.append("\t\t}\n");
 	        				for (SootClass sc: sm.getExceptions()) {
-	        					sb.append("\t\tcatch (" + sc.getName() + " " + error_var + ") {\n");
+	        					sb.append("\t\tcatch (" + sc.getName().replace("$", ".") + " " + error_var + ") {\n");
 	        					sb.append("\t\t\t" + error_var + ".printStackTrace();\n");
 	        					sb.append("\t\t}\n");
 	        					error_counter++;
