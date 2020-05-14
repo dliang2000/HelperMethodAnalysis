@@ -123,32 +123,26 @@ public class Main {
 	        }
 	    }
 	}
-	
-	private static boolean isTestCase(SootMethod sm) {		
-		boolean isTest = false;
-		// System
-		if (sm.getName().startsWith("test") && sm.getDeclaringClass().getName().contains("Test") 
-				&& sm.getParameterCount() == 0 && sm.getReturnType().toString() == "void") {
+
+	private static boolean isTestCase(SootMethod sm) {
+		// JUnit 3
+		if (sm.getName().startsWith("test") &&
+			sm.getParameterCount() == 0 && sm.getReturnType().toString() == "void") {
 			System.out.println("Test case found: " + sm.getSubSignature());
 			return true;
 		}
-		AnnotationTag tag = (AnnotationTag) sm.getTag("AnnotationTag");
+		// JUnit 4+
+		List<soot.tagkit.Tag> smTags = sm.getTags();
+		soot.tagkit.VisibilityAnnotationTag tag = (soot.tagkit.VisibilityAnnotationTag) sm.getTag("VisibilityAnnotationTag");
 		if (tag != null) {
-			System.out.println("VisibilityAnnotationTag: " + tag.toString());
-//			if (tag.getType().equals(""))
-//		    for (AnnotationTag annotation : tag.getAnnotations()) {
-//		    	List<AnnotationElem> elemsList = new ArrayList<AnnotationElem>(annotation.getElems());
-//		        for (AnnotationElem elem: elemsList) {
-//		        	System.out.println(elem.toString());
-//		        	if (elem.getName().contains("Test")) {
-//		        		isTest = true;
-//		        		System.out.println("Test case found: " + sm.getSignature());
-//		        	}
-//		        	break;
-//		        }
-//		    }
+			for (AnnotationTag annotation : tag.getAnnotations()) {
+				if (annotation.getType().equals("Lorg/junit/Test;")) {
+				        System.out.println("Test case found: " + sm.getSignature());
+					return true;
+				}
+		        }
 		}
-		return isTest;
+		return false;
 	}
 }
 
