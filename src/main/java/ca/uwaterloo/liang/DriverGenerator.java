@@ -15,6 +15,7 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Transform;
 import soot.options.Options;
+import soot.tagkit.AnnotationTag;
 
 public class DriverGenerator {
 	private static String packagename;
@@ -23,8 +24,8 @@ public class DriverGenerator {
 	private static String output_path;
 	public static void main(String[] args) throws IOException {
 		PackManager.v().getPack("wjtp").add(
-		     new Transform("wjtp.myTransform", DriverTransformer.v()) {
-		     });
+				new Transform("wjtp.myTransform", DriverTransformer.v()) {
+				});
 		Options.v().set_prepend_classpath(true);                                                                                 
 		Options.v().set_verbose(true);
 		Options.v().set_whole_program(true);
@@ -78,11 +79,10 @@ public class DriverGenerator {
 	        		while (mIt.hasNext()) {
 	        			SootMethod sm = (SootMethod) mIt.next();
 	        			// check that the sootmethod is indeed a test case
-	        			if (!sm.getName().startsWith("test") || !sm.getDeclaringClass().getName().contains("Test") 
-	        					|| !(sm.getParameterCount() == 0) || !(sm.getReturnType().toString() == "void"))
+	        			if (!isTestCase(sm))
 	        				continue;
 	        			System.out.println("SootMethod " + sm.getSubSignature() + " is visited in SootClass " + appClass.getName());
-	        			// Check if the sootmethod throws exception, if
+	        			// Check if the sootmethod throws exception(s), if it does, generate the corresponding try-catch statements
 	        			if (sm.getExceptions().isEmpty()) {
 	        				sb.append("\t\t" + class_var + "." + sm.getName()+"();\n");
 	        			} else {
@@ -102,11 +102,9 @@ public class DriverGenerator {
 	        		counter++;
 	        		class_var = "class" + String.valueOf(counter);
 	        	}
-	        	sb.append("\t}\n" + 
-	        			"}");
+	        	sb.append("\t}\n" + "}");
 	        	writer.write(sb.toString());
 	        	writer.close();
-	        	
 	        	if (sb2.length() != 0) {
 	        		BufferedWriter writer2 = new BufferedWriter(new FileWriter(output_path+"/" + benchmark + "_excluded_test_class_with_contsructor.txt"));
 	        		writer2.write(sb2.toString());
@@ -124,5 +122,25 @@ public class DriverGenerator {
 		str.append("public class Driver {\n" + 
 				"\tpublic static void main(String[] argv) {\n");
 		return str;
+	}
+	private static boolean isTestCase(SootMethod sm) {
+		// JUnit 3
+/*		if (sm.getName().startsWith("test") &&
+				sm.getParameterCount() == 0 && sm.getReturnType().toString() == "void") {
+			System.out.println("Test case found: " + sm.getSubSignature());
+			return true;
+		}*/
+		// JUnit 4+
+		List<soot.tagkit.Tag> smTags = sm.getTags();
+		soot.tagkit.VisibilityAnnotationTag tag = (soot.tagkit.VisibilityAnnotationTag) sm.getTag("VisibilityAnnotationTag");
+		if (tag != null) {
+			for (AnnotationTag annotation : tag.getAnnotations()) {
+				if (annotation.getType().equals("Lorg/junit/Test;")) {
+					System.out.println("Test case found: " + sm.getSignature());
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
