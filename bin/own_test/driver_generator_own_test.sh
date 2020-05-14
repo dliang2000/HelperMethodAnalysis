@@ -2,12 +2,14 @@
 #under msp everything should be identical on all computers
 MACHINE_SPECIFIC_PATH="$HOME/Graduation_Studies/ThesisWork"
 
+PACKAGE="ca.uwaterloo.liang"
 SOOT_JAR="$MACHINE_SPECIFIC_PATH/soot_jar/sootclasses-trunk-jar-with-dependencies.jar"
 JAVA_PATH="$MACHINE_SPECIFIC_PATH/HelperMethodAnalysis/target/classes"
-CC_CLASS="ca.uwaterloo.liang.Main"
-BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/OpenSourceProjects/Benchmarks/commons-math-MATH_3_6_1"
-TARGET_PATH="target/classes"
+CC_CLASS="ca.uwaterloo.liang.DriverGenerator"
+BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/OpenSourceProjects/Benchmarks/TemporaryTest"
 TARGET_TEST_PATH="target/test-classes"
+DESTINATION="$BENCHMARK_PATH/src/test/java/ca/uwaterloo/liang"
+BENCHMARK="commons_math_3.6.1"
 
 MVN_DEPENDENCY_PATH="$BENCHMARK_PATH/mvn_dependencies"
 
@@ -25,4 +27,5 @@ if [ -a is_maven ]; then
   mvn clean test
 fi
 
-java -cp $SOOT_JAR:$JAVA_PATH $CC_CLASS $BENCHMARK_PATH/$TARGET_PATH $BENCHMARK_PATH/$TARGET_TEST_PATH $jars`cat benchmark_class_path`:$JAR_PATH
+java -cp $SOOT_JAR:$JAVA_PATH $CC_CLASS $BENCHMARK_PATH/$TARGET_TEST_PATH $jars`cat benchmark_class_path`:$JAR_PATH $PACKAGE $DESTINATION $BENCHMARK
+rm -rf "sootOutput/"
