@@ -8,7 +8,7 @@ public class MethodHelperTest {
 	MethodHelper mh = new MethodHelper(7);
 	
 	@Test
-	public void test1() {
+	public void first() {
 		
 		assertTrue(MethodHelper.isValidInteger(mh, 1, 10));
 	}
