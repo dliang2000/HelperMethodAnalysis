@@ -30,6 +30,12 @@ public class DriverGenerator {
 		Options.v().set_verbose(true);
 		Options.v().set_whole_program(true);
 		List<String> pd = new ArrayList<>();
+		System.out.println("args[0]: " + args[0]);
+		System.out.println("args[1]: " + args[1]);
+		System.out.println("args[2]: " + args[2]);
+		System.out.println("args[3]: " + args[3]);
+		System.out.println("args[4]: " + args[4]);
+		System.out.println("args[5]: " + args[5]);
 		pd.add("-process-dir");
 		pd.add(args[0]);
 		Options.v().set_soot_classpath(args[1]);
@@ -60,12 +66,15 @@ public class DriverGenerator {
 	        	while (classIt.hasNext()) {
 	        		SootClass appClass = (SootClass) classIt.next();
 	        		System.out.println("SootClass Visited: " + appClass.toString());
+	        		containsConstructor = false;
 	        		// skip classes that are not concrete, and classes that are private (which would contain a "$" sign)
 	        		if (!appClass.isConcrete() || !appClass.getName().contains("Test") || appClass.getName().contains("$"))
 	        			continue;
 	        		System.out.println("Concrete SootClass Package: " + appClass.getPackageName() + ", SootClass Name: " + appClass.getName());
 	        		for (SootMethod sm: appClass.getMethods()) {
-	        			if (sm.isConstructor() && sm.getParameterCount() > 0) {
+	        			// exclude test classes with multi-arg constructor or private no-arg constructor
+	        			if (sm.isConstructor() && (sm.getParameterCount() > 0 || sm.isPrivate())) {
+	        				System.out.println("Concrete SootClass " +appClass.getName() + " has a multi-arg or private no-arg constructor.");
 	        				sb2.append(appClass.getName()+"\n");
 	        				containsConstructor=true;
 	        			}
@@ -73,7 +82,6 @@ public class DriverGenerator {
 	        		// skips the test classes with a constructor
 	        		if (containsConstructor)
 	        			continue;
-	        		
 	        		sb.append("\t\t" + appClass.getName() + " " + class_var + " = new " + appClass.getName()+"();\n");
 	        		Iterator<SootMethod> mIt = appClass.getMethods().iterator();
 	        		while (mIt.hasNext()) {
@@ -82,7 +90,6 @@ public class DriverGenerator {
 	        			if (!isTestCase(sm))
 	        				continue;
 	        			System.out.println("SootMethod " + sm.getSubSignature() + " is visited in SootClass " + appClass.getName());
-	        			// Check if the sootmethod throws exception(s), if it does, generate the corresponding try-catch statements
 	        			if (sm.getExceptions().isEmpty()) {
 	        				sb.append("\t\t" + class_var + "." + sm.getName()+"();\n");
 	        			} else {

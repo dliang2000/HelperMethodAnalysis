@@ -58,11 +58,10 @@ public class Main {
 		protected void internalTransform(String phaseName, Map options) {
 	    	CHATransformer.v().transform();
 	    	CallGraph cg;
-	    	int count = 0;
-	    	List<SootMethod> listOfTestsCalled = new ArrayList<SootMethod>();
-	    	Set<SootMethod> setOfTestsCalled = new HashSet<SootMethod>();
-	    	Map<SootMethod, List<SootMethod>> helpersListMap = new HashMap<SootMethod, List<SootMethod>>();
-	    	Map<SootMethod, Set<SootMethod>> helpersSetMap = new HashMap<SootMethod, Set<SootMethod>>();
+	    	List<SootMethod> numberOfTimesTheMethodIsCalled = new ArrayList<SootMethod>();
+	    	Set<SootMethod> numberOfTestsCalledTheMethod = new HashSet<SootMethod>();
+	    	Map<SootMethod, List<SootMethod>> helpersCalledMultipleTimes = new HashMap<SootMethod, List<SootMethod>>();
+	    	Map<SootMethod, Set<SootMethod>> helpersCalledInMultipleMethods = new HashMap<SootMethod, Set<SootMethod>>();
 
 	    	Iterator<SootClass> classIt = Scene.v().getApplicationClasses().iterator();
 	    	
@@ -92,32 +91,33 @@ public class Main {
 	    	    		SootMethod srcMethod = e.src();
 	    	    		System.out.println("SootMethod " + srcMethod.getSubSignature() + " called " + sm.getSubSignature());
 	    	    		if (isTestCase(srcMethod)) {
-	    	    			listOfTestsCalled.add(srcMethod);
-	    	    			setOfTestsCalled.add(srcMethod);
+	    	    			numberOfTimesTheMethodIsCalled.add(srcMethod);
+	    	    			numberOfTestsCalledTheMethod.add(srcMethod);
 	    	    		}
 	    	    	}
-	    	    	if (setOfTestsCalled.size() > 1) {
-	    	    		helpersSetMap.put(sm, setOfTestsCalled);
-	    	    	} else if (listOfTestsCalled.size() > 1) {
-	    	    		helpersListMap.put(sm, listOfTestsCalled);
+	    	    	if (numberOfTestsCalledTheMethod.size() > 1) {
+	    	    		helpersCalledInMultipleMethods.put(sm, numberOfTestsCalledTheMethod);
+	    	    	} 
+	    	    	if (numberOfTimesTheMethodIsCalled.size() > 1) {
+	    	    		helpersCalledMultipleTimes.put(sm, numberOfTimesTheMethodIsCalled);
 	    	    	}
-	    	    	listOfTestsCalled = new ArrayList<SootMethod>();
-	    	    	setOfTestsCalled = new HashSet<SootMethod>();
+	    	    	numberOfTimesTheMethodIsCalled = new ArrayList<SootMethod>();
+	    	    	numberOfTestsCalledTheMethod = new HashSet<SootMethod>();
 	    	    }
 	    	}
 	        try {
 	        	BufferedWriter writer = new BufferedWriter(new FileWriter(output_path+"/"+benchmark+".txt"));
 	        	StringBuilder sb = new StringBuilder();
-	        	sb.append("Number of Helper Methods Called multiple times from different test cases: " + helpersSetMap.size() + "\n");
-				for (Entry<SootMethod, Set<SootMethod>> entry: helpersSetMap.entrySet()) {
+	        	sb.append("Number of Helper Methods Called multiple times from different test cases: " + helpersCalledInMultipleMethods.size() + "\n");
+				for (Entry<SootMethod, Set<SootMethod>> entry: helpersCalledInMultipleMethods.entrySet()) {
 					sb.append("Helper Method Class: " + entry.getKey().getDeclaringClass().getName() + ", Helper Method name: " + entry.getKey().getSubSignature()+"\n");
 	        		Set<SootMethod> sootMethodSet = entry.getValue();
 	        		for (SootMethod sm: sootMethodSet) {
 	        			sb.append("\tTest Case Class: " + sm.getDeclaringClass().getName() + ", Test Case that called the Helper Method: " + sm.getSubSignature() +"\n");
 	        		}
 	        	}
-				sb.append("\nNumber of Helper Methods Called multiple times from the same test case: " + helpersListMap.size() + "\n");
-				for (Entry<SootMethod, List<SootMethod>> entry: helpersListMap.entrySet()) {
+				sb.append("\nNumber of Helper Methods Called multiple times from the same test case: " + helpersCalledMultipleTimes.size() + "\n");
+				for (Entry<SootMethod, List<SootMethod>> entry: helpersCalledMultipleTimes.entrySet()) {
 	        		sb.append("Helper Method Class: " + entry.getKey().getDeclaringClass().getName() + ", Helper Method name: " + entry.getKey().getSubSignature()+"\n");
 	        		List<SootMethod> sootMethodList = entry.getValue();
 	        		for (SootMethod sm: sootMethodList) {
