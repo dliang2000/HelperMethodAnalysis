@@ -74,6 +74,7 @@ org.apache.commons.collections4.map.UnmodifiableOrderedMapTest
 org.apache.commons.collections4.map.ListOrderedMap2Test
 org.apache.commons.collections4.ArrayStackTest
 org.apache.commons.collections4.splitmap.TransformedSplitMapTest
+org.apache.commons.collections4.TestUtils
 org.apache.commons.collections4.multiset.PredicatedMultiSetTest
 org.apache.commons.collections4.multiset.SynchronizedMultiSetTest
 org.apache.commons.collections4.multiset.HashMultiSetTest
