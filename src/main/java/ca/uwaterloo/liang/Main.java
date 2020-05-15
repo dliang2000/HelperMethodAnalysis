@@ -98,17 +98,16 @@ public class Main {
 					helperCallersCount.put(srcMethod, c+1);
 				}
 			}
-			// identify all methods that are called more than once from anywhere
+			// identify all methods that are called more than once from anywhere and record how many times called
 			if (callsToHelper > 1) {
-				int c = multiCalledHelpers.getOrDefault(helper, 0);
-				multiCalledHelpers.put(helper, c+1);
+				multiCalledHelpers.put(helper, callsToHelper);
 			}
 
 			// identify all methods that are called more than once from same method
 			for (Entry<SootMethod, Integer> entry : helperCallersCount.entrySet()) {
 				if (entry.getValue() > 1) {
-					int c = multiCalledHelpersFromSameTest.getOrDefault(helper, 0);
-					multiCalledHelpersFromSameTest.put(helper, c+1);
+					int c = multiCalledHelpersFromSameTest.put(helper, 0);
+					multiCalledHelpersFromSameTest.put(helper, c + 1);
 				}
 	    	    	}
 	    	    }
