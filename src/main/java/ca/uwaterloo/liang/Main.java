@@ -99,8 +99,10 @@ public class Main {
 				}
 			}
 			// identify all methods that are called more than once from anywhere
-			int c = multiCalledHelpers.getOrDefault(helper, 0);
-			multiCalledHelpers.put(helper, c+1);
+			if (callsToHelper > 1) {
+				int c = multiCalledHelpers.getOrDefault(helper, 0);
+				multiCalledHelpers.put(helper, c+1);
+			}
 
 			// identify all methods that are called more than once from same method
 			for (Entry<SootMethod, Integer> entry : helperCallersCount.entrySet()) {
