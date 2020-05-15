@@ -58,8 +58,6 @@ public class Main {
 		protected void internalTransform(String phaseName, Map options) {
 	    	CHATransformer.v().transform();
 	    	CallGraph cg;
-	    	List<SootMethod> numberOfTimesTheMethodIsCalled = new ArrayList<SootMethod>();
-	    	Set<SootMethod> numberOfTestsCalledTheMethod = new HashSet<SootMethod>();
 	    	Map<SootMethod, List<SootMethod>> helpersCalledMultipleTimes = new HashMap<SootMethod, List<SootMethod>>();
 	    	Map<SootMethod, Set<SootMethod>> helpersCalledInMultipleMethods = new HashMap<SootMethod, Set<SootMethod>>();
 
@@ -81,6 +79,8 @@ public class Main {
 	    	    System.out.println("Concrete SootClass Package: " + appClass.getPackageName() + ", SootClass Name: " + appClass.getName());
 	    	    Iterator<SootMethod> mIt = appClass.getMethods().iterator();
 	    	    while (mIt.hasNext()) {
+                        List<> numberOfTimesTheMethodIsCalled = new ArrayList<SootMethod>();
+                        Set<> numberOfTestsCalledTheMethod = new HashSet<SootMethod>();
 	    	    	SootMethod sm = (SootMethod) mIt.next();
 	    	    	if (sm.isAbstract() || sm.isNative() || sm.isConstructor() || sm.isStaticInitializer())
 	    	    		continue;
@@ -101,8 +101,6 @@ public class Main {
 	    	    	if (numberOfTimesTheMethodIsCalled.size() > 1) {
 	    	    		helpersCalledMultipleTimes.put(sm, numberOfTimesTheMethodIsCalled);
 	    	    	}
-	    	    	numberOfTimesTheMethodIsCalled = new ArrayList<SootMethod>();
-	    	    	numberOfTestsCalledTheMethod = new HashSet<SootMethod>();
 	    	    }
 	    	}
 	        try {
