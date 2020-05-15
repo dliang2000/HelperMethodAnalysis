@@ -14,3 +14,4 @@ org.apache.commons.math3.analysis.integration.gauss.LegendreParametricTest
 org.apache.commons.math3.analysis.integration.gauss.HermiteParametricTest
 org.apache.commons.math3.transform.FastSineTransformerTest
 org.apache.commons.math3.transform.FastCosineTransformerTest
+org.apache.commons.math3.TestUtils
