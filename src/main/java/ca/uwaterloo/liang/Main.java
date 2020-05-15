@@ -60,7 +60,6 @@ public class Main {
 	    	CallGraph cg;
 		Map<SootMethod, Integer> multiCalledHelpers = new HashMap<>();
 		Map<SootMethod, Integer> multiCalledHelpersFromSameTest = new HashMap<>();
-		Map<SootMethod, Set<SootMethod>> testsCallingMethod = new HashMap<SootMethod, Set<SootMethod>>();
 
 	    	Iterator<SootClass> classIt = Scene.v().getApplicationClasses().iterator();
 	    	
@@ -97,10 +96,6 @@ public class Main {
 					callersOfHelper.put(srcMethod, c+1);
 				}
 			}
-			// TODO we don't use testsCallingMethod yet, should we?
-			Set<SootMethod> s = testsCallingMethod.getOrDefault(helper, new HashSet<>());
-			s.addAll(callersOfHelper.keySet());
-
 			// identify all methods that are called more than once from anywhere
 			for (SootMethod m : callersOfHelper.keySet()) {
 				int c = multiCalledHelpers.getOrDefault(m, 0);
