@@ -1,14 +1,18 @@
 package ca.uwaterloo.liang;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import soot.PackManager;
 import soot.Scene;
@@ -72,6 +76,10 @@ public class Main {
                 cg = Scene.v().getCallGraph();
                 Scene.v().releaseCallGraph();
             }
+            
+            List<String[]> linesToAdd = new ArrayList<>();
+            linesToAdd.add(new String[] 
+                    { "Class", "Helper Method Name", "Total Number of Calls", "Total Number of Distinct Test-Case Callers", "Total Number of Multi-called Test Cases" });
 
             while (classIt.hasNext()) {
                 SootClass appClass = (SootClass) classIt.next();
@@ -96,8 +104,7 @@ public class Main {
                     while (it.hasNext()) {
                         Edge e = (Edge) it.next();
                         SootMethod srcMethod = e.src();
-                        System.out
-                                .println("SootMethod " + srcMethod.getSubSignature() + " called this potential helper");
+                        System.out.println("SootMethod " + srcMethod.getSubSignature() + " called this potential helper");
                         if (isTestCase(srcMethod)) {
                             callsToHelper++;
                             int c = helperCallersCount.getOrDefault(srcMethod, 0);
@@ -114,9 +121,15 @@ public class Main {
                     // record many distinct methods they are multi-called from
                     for (Entry<SootMethod, Integer> entry : helperCallersCount.entrySet()) {
                         if (entry.getValue() > 1) {
-                            int c = multiCalledHelpersFromSameTest.put(helper, 0);
+                            int c = multiCalledHelpersFromSameTest.getOrDefault(helper, 0);
                             multiCalledHelpersFromSameTest.put(helper, c + 1);
                         }
+                    }
+                    // Add the helper method data to the csv file if it is being called more than once
+                    if (callsToHelper > 1) {
+                        linesToAdd.add(new String[] 
+                                { appClass.getName(), helper.getSubSignature(), String.valueOf(callsToHelper), 
+                                        String.valueOf(helperCallersCount.size()), String.valueOf(multiCalledHelpersFromSameTest.get(helper)) });
                     }
                 }
             }
@@ -156,10 +169,23 @@ public class Main {
                 }
                 writer.write(sb.toString());
                 writer.close();
+                
+                File csvOutputFile = new File(output_path + "/CSV_Files/" + benchmark + "_helper_method_counter.csv");
+                try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
+                    linesToAdd.stream()
+                      .map(this::convertToCSV)
+                      .forEach(pw::println);
+                }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+        }
+        
+        // Because the subsignature of methods could contain comma, we use tab as delimiter for csv
+        public String convertToCSV(String[] data) {
+            return Stream.of(data)
+              .collect(Collectors.joining("\t"));
         }
     }
 
@@ -186,5 +212,3 @@ public class Main {
         return false;
     }
 }
-
-//&& sm.getDeclaringClass().getName().contains("Test")
