@@ -58,8 +58,9 @@ public class Main {
 		protected void internalTransform(String phaseName, Map options) {
 	    	CHATransformer.v().transform();
 	    	CallGraph cg;
-	    	Map<SootMethod, List<SootMethod>> helpersCalledMultipleTimes = new HashMap<SootMethod, List<SootMethod>>();
-	    	Map<SootMethod, Set<SootMethod>> helpersCalledInMultipleMethods = new HashMap<SootMethod, Set<SootMethod>>();
+		Map<SootMethod, Integer> multiCalledHelpers = new HashMap<>();
+		Map<SootMethod, Integer> multiCalledHelpersFromSameTest = new HashMap<>();
+		Map<SootMethod, Set<SootMethod>> testsCallingMethod = new HashMap<SootMethod, Set<SootMethod>>();
 
 	    	Iterator<SootClass> classIt = Scene.v().getApplicationClasses().iterator();
 	    	
@@ -79,55 +80,79 @@ public class Main {
 	    	    System.out.println("Concrete SootClass Package: " + appClass.getPackageName() + ", SootClass Name: " + appClass.getName());
 	    	    Iterator<SootMethod> mIt = appClass.getMethods().iterator();
 	    	    while (mIt.hasNext()) {
-                        List<> numberOfTimesTheMethodIsCalled = new ArrayList<SootMethod>();
-                        Set<> numberOfTestsCalledTheMethod = new HashSet<SootMethod>();
-	    	    	SootMethod sm = (SootMethod) mIt.next();
-	    	    	if (sm.isAbstract() || sm.isNative() || sm.isConstructor() || sm.isStaticInitializer())
+			SootMethod helper = (SootMethod) mIt.next();
+			if (helper.isAbstract() || helper.isNative() || helper.isConstructor() || helper.isStaticInitializer())
 	    	    		continue;
-	    	    	System.out.println("SootMethod " + sm.getSubSignature() + " is visited in SootClass " + appClass.getName());
-	    	    	Iterator<Edge> it = cg.edgesInto(sm);
-	    	    	while (it.hasNext()) {
-	    	    		Edge e = (Edge) it.next();
-	    	    		SootMethod srcMethod = e.src();
-	    	    		System.out.println("SootMethod " + srcMethod.getSubSignature() + " called " + sm.getSubSignature());
-	    	    		if (isTestCase(srcMethod)) {
-	    	    			numberOfTimesTheMethodIsCalled.add(srcMethod);
-	    	    			numberOfTestsCalledTheMethod.add(srcMethod);
-	    	    		}
+			System.out.println("SootMethod " + helper.getSubSignature() + " is visited in nSootClass " + appClass.getName());
+
+			Map<SootMethod, Integer> callersOfHelper = new HashMap<>();
+
+			Iterator<Edge> it = cg.edgesInto(helper);
+			while (it.hasNext()) {
+				Edge e = (Edge) it.next();
+				SootMethod srcMethod = e.src();
+				System.out.println("SootMethod " + srcMethod.getSubSignature() + " called " + helper.getSubSignature());
+				if (isTestCase(srcMethod)) {
+					int c = callersOfHelper.getOrDefault(srcMethod, 0);
+					callersOfHelper.put(srcMethod, c+1);
+				}
+			}
+			// TODO we don't use testsCallingMethod yet, should we?
+			Set<SootMethod> s = testsCallingMethod.getOrDefault(helper, new HashSet<>());
+			s.addAll(callersOfHelper.keySet());
+
+			// identify all methods that are called more than once from anywhere
+			for (SootMethod m : callersOfHelper.keySet()) {
+				int c = multiCalledHelpers.getOrDefault(m, 0);
+				multiCalledHelpers.put(m, c+1);
 	    	    	}
-	    	    	if (numberOfTestsCalledTheMethod.size() > 1) {
-	    	    		helpersCalledInMultipleMethods.put(sm, numberOfTestsCalledTheMethod);
-	    	    	} 
-	    	    	if (numberOfTimesTheMethodIsCalled.size() > 1) {
-	    	    		helpersCalledMultipleTimes.put(sm, numberOfTimesTheMethodIsCalled);
+
+			// identify all methods that are called more than once from same method
+			for (Entry<SootMethod, Integer> entry : callersOfHelper.entrySet()) {
+				if (entry.getValue() > 1) {
+					int c = multiCalledHelpersFromSameTest.getOrDefault(helper, 0);
+					multiCalledHelpersFromSameTest.put(helper, c+1);
+				}
 	    	    	}
 	    	    }
 	    	}
+
 	        try {
 	        	BufferedWriter writer = new BufferedWriter(new FileWriter(output_path+"/"+benchmark+".txt"));
 	        	StringBuilder sb = new StringBuilder();
-	        	sb.append("Number of Helper Methods Called multiple times from different test cases: " + helpersCalledInMultipleMethods.size() + "\n");
-				for (Entry<SootMethod, Set<SootMethod>> entry: helpersCalledInMultipleMethods.entrySet()) {
-					sb.append("Helper Method Class: " + entry.getKey().getDeclaringClass().getName() + ", Helper Method name: " + entry.getKey().getSubSignature()+"\n");
-	        		Set<SootMethod> sootMethodSet = entry.getValue();
-	        		for (SootMethod sm: sootMethodSet) {
-	        			sb.append("\tTest Case Class: " + sm.getDeclaringClass().getName() + ", Test Case that called the Helper Method: " + sm.getSubSignature() +"\n");
-	        		}
-	        	}
-				sb.append("\nNumber of Helper Methods Called multiple times from the same test case: " + helpersCalledMultipleTimes.size() + "\n");
-				for (Entry<SootMethod, List<SootMethod>> entry: helpersCalledMultipleTimes.entrySet()) {
-	        		sb.append("Helper Method Class: " + entry.getKey().getDeclaringClass().getName() + ", Helper Method name: " + entry.getKey().getSubSignature()+"\n");
-	        		List<SootMethod> sootMethodList = entry.getValue();
-	        		for (SootMethod sm: sootMethodList) {
-	        			sb.append("\tTest Case Class: " + sm.getDeclaringClass().getName() + ", Test Case that called the Helper Method: " + sm.getSubSignature() +"\n");
-	        		}
-	        	}
-	        	writer.write(sb.toString());
-	        	writer.close();
-	        } catch (IOException e) {
-	        	// TODO Auto-generated catch block
-	        	e.printStackTrace();
-	        }
+			sb.append("# Helper Methods called multiple times: " + multiCalledHelpers.size() + "\n");
+			for (Entry<SootMethod, Integer> entry: multiCalledHelpers.entrySet()) {
+				SootMethod helper = entry.getKey();
+				if (entry.getValue() > 1) {
+					sb.append("Helper Method Class: " + helper.getDeclaringClass().getName() + ", Helper Method name: " + helper.getSubSignature()+"\n");
+					Iterator<Edge> it = cg.edgesInto(helper);
+					while (it.hasNext()) {
+						SootMethod caller = it.next().src();
+						if (isTestCase(caller)) {
+							sb.append("\tCalled from: " + caller.getDeclaringClass().getName() + ", method: " + caller.getSubSignature() +"\n");
+						}
+					}
+				}
+			}
+
+			sb.append("\n# Helper Methods called multiple times from the same test case: " + multiCalledHelpersFromSameTest.size() + "\n");
+			for (Entry<SootMethod, Integer> entry: multiCalledHelpersFromSameTest.entrySet()) {
+				SootMethod helper = entry.getKey();
+				sb.append("Helper Method Class: " + helper.getDeclaringClass().getName() + ", Helper Method name: " + helper.getSubSignature()+"\n");
+				Iterator<Edge> it = cg.edgesInto(helper);
+				while (it.hasNext()) {
+					SootMethod caller = it.next().src();
+					if (isTestCase(caller)) {
+						sb.append("\tCalled from: " + caller.getDeclaringClass().getName() + ", method: " + caller.getSubSignature() +"\n");
+					}
+				}
+			}
+			writer.write(sb.toString());
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    }
 	}
 
