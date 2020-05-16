@@ -60,6 +60,21 @@ public class Main {
             return instance;
         }
 
+	private boolean isDefinedOutsideTestClass(SootMethod m) {
+	    String ss = m.getSubSignature();
+	    SootClass sc = m.getDeclaringClass();
+	    // unfortunately, test classes are not annotated
+	    // we approximate by filtering out anything defined in java.*
+	    do {
+		if (!sc.declaresMethod(ss)) break;
+		if (sc.getJavaPackageName().startsWith("java")) {
+		    return true;
+		}
+		sc = sc.getSuperclass();
+	    } while (sc != null);
+	    return false;
+	}
+
         @Override
         protected void internalTransform(String phaseName, Map options) {
             CHATransformer.v().transform();
@@ -93,6 +108,8 @@ public class Main {
                     SootMethod helper = (SootMethod) mIt.next();
                     if (helper.isAbstract() || helper.isNative() || helper.isConstructor()
                             || helper.isStaticInitializer())
+                        continue;
+                    if (isDefinedOutsideTestClass(helper))
                         continue;
                     System.out.println("visiting potential helper SootMethod " + helper.getSubSignature()
                             + " in SootClass " + appClass.getName());

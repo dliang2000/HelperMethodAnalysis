@@ -20,4 +20,9 @@ public class MethodHelper {
 	public void testFromSelf() {
 		MethodHelper.isValidInteger(new MethodHelper(7), 1, 10);
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		return true;
+	}
 }
