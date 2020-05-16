@@ -63,7 +63,6 @@ org.codehaus.plexus.util.cli.Commandline	void addArguments(java.lang.String[])	6
 org.codehaus.plexus.util.cli.Commandline	void addEnvironment(java.lang.String,java.lang.String)	2	2	null
 org.codehaus.plexus.util.cli.Commandline	java.lang.String[] getEnvironmentVariables()	2	2	null
 org.codehaus.plexus.util.cli.Commandline	java.lang.String[] getShellCommandline()	10	8	1
-org.codehaus.plexus.util.cli.Commandline	java.lang.String toString()	5	5	null
 org.codehaus.plexus.util.cli.Commandline	void setWorkingDirectory(java.lang.String)	7	7	null
 org.codehaus.plexus.util.cli.Commandline	void setWorkingDirectory(java.io.File)	2	2	null
 org.codehaus.plexus.util.cli.Commandline	java.lang.Process execute()	2	2	null
@@ -114,8 +113,6 @@ org.codehaus.plexus.util.xml.Xpp3Dom	int getChildCount()	5	5	null
 org.codehaus.plexus.util.xml.Xpp3Dom	java.lang.Object getInputLocation()	23	8	5
 org.codehaus.plexus.util.xml.Xpp3Dom	void setInputLocation(java.lang.Object)	12	4	4
 org.codehaus.plexus.util.xml.Xpp3Dom	org.codehaus.plexus.util.xml.Xpp3Dom mergeXpp3Dom(org.codehaus.plexus.util.xml.Xpp3Dom,org.codehaus.plexus.util.xml.Xpp3Dom)	8	8	null
-org.codehaus.plexus.util.xml.Xpp3Dom	boolean equals(java.lang.Object)	4	2	2
-org.codehaus.plexus.util.xml.Xpp3Dom	java.lang.String toString()	2	1	1
 org.codehaus.plexus.util.xml.XmlWriterUtil	void writeCommentLineBreak(org.codehaus.plexus.util.xml.XMLWriter,int)	2	1	1
 org.codehaus.plexus.util.xml.XmlWriterUtil	void writeComment(org.codehaus.plexus.util.xml.XMLWriter,java.lang.String)	6	4	1
 org.codehaus.plexus.util.xml.XmlWriterUtil	void writeComment(org.codehaus.plexus.util.xml.XMLWriter,java.lang.String,int)	2	1	1
@@ -125,15 +122,13 @@ org.codehaus.plexus.util.xml.XmlWriterUtil	void writeCommentText(org.codehaus.pl
 org.codehaus.plexus.util.xml.PrettyPrintXMLWriter	void startElement(java.lang.String)	8	6	1
 org.codehaus.plexus.util.xml.PrettyPrintXMLWriter	void addAttribute(java.lang.String,java.lang.String)	5	3	1
 org.codehaus.plexus.util.xml.PrettyPrintXMLWriter	void endElement()	9	6	2
-org.codehaus.plexus.util.xml.XmlStreamWriter	void close()	24	17	6
-org.codehaus.plexus.util.xml.XmlStreamWriter	void flush()	3	1	1
 org.codehaus.plexus.util.xml.XmlUtil	void prettyFormat(java.io.Reader,java.io.Writer)	3	3	null
-org.codehaus.plexus.util.xml.pull.MXParser	void setInput(java.io.Reader)	17	15	2
+org.codehaus.plexus.util.xml.pull.MXParser	void setInput(java.io.Reader)	27	25	2
 org.codehaus.plexus.util.xml.pull.MXParser	void defineEntityReplacementText(java.lang.String,java.lang.String)	6	4	1
-org.codehaus.plexus.util.xml.pull.MXParser	java.lang.String getText()	32	8	4
+org.codehaus.plexus.util.xml.pull.MXParser	java.lang.String getText()	34	10	4
 org.codehaus.plexus.util.xml.pull.MXParser	java.lang.String getName()	2	1	1
-org.codehaus.plexus.util.xml.pull.MXParser	int next()	19	6	5
-org.codehaus.plexus.util.xml.pull.MXParser	int nextToken()	67	9	9
+org.codehaus.plexus.util.xml.pull.MXParser	int next()	34	11	10
+org.codehaus.plexus.util.xml.pull.MXParser	int nextToken()	77	14	12
 org.codehaus.plexus.util.FastMap$EntrySet$1	boolean hasNext()	3	3	null
 org.codehaus.plexus.util.FastMap$EntrySet$1	java.lang.Object next()	4	4	null
 org.codehaus.plexus.util.CachedMap	java.lang.Object get(java.lang.Object)	29	4	4
@@ -184,7 +179,6 @@ org.codehaus.plexus.util.DirectoryScannerTest	void assertInclusionsAndExclusions
 org.codehaus.plexus.util.DirectoryScannerTest	void createFiles(java.io.File,java.lang.String[])	10	5	5
 org.codehaus.plexus.util.LineOrientedInterpolatingReaderTest	java.util.Map getStandardMap()	6	6	null
 org.codehaus.plexus.util.SweeperPoolTest$TestObjectPool	java.util.Vector testGetDisposedObjects()	3	2	1
-org.codehaus.plexus.util.IOUtilTest$TestWriter	void close()	23	16	6
 org.codehaus.plexus.util.IOUtilTest	void assertEqualContent(byte[],byte[])	2	2	null
 org.codehaus.plexus.util.IOUtilTest	java.io.File newFile(java.lang.String)	8	8	null
 org.codehaus.plexus.util.IOUtilTest	void checkFile(java.io.File)	8	8	null
@@ -202,6 +196,9 @@ org.codehaus.plexus.util.InterpolationFilterReaderTest	java.lang.String interpol
 org.codehaus.plexus.util.FileUtilsTest	void reallySleep(int)	2	2	null
 org.codehaus.plexus.util.xml.XmlUtilTest	java.lang.String getBasedir()	4	4	null
 org.codehaus.plexus.util.xml.XmlUtilTest	java.io.File getTestOutputFile(java.lang.String)	3	3	null
+org.codehaus.plexus.util.xml.XmlStreamReaderTest	void checkXmlContent(java.lang.String,java.lang.String)	7	2	1
+org.codehaus.plexus.util.xml.XmlStreamReaderTest	void checkXmlStreamReader(java.lang.String,java.lang.String)	9	9	null
+org.codehaus.plexus.util.xml.XmlStreamReaderTest	void checkXmlStreamReader(java.lang.String,java.lang.String,java.lang.String,byte[])	4	2	1
 org.codehaus.plexus.util.xml.Xpp3DomWriterTest	java.lang.String createExpectedXML(boolean)	2	2	null
 org.codehaus.plexus.util.xml.Xpp3DomWriterTest	org.codehaus.plexus.util.xml.Xpp3Dom createXpp3Dom()	2	2	null
 org.codehaus.plexus.util.xml.XmlStreamWriterTest	void checkXmlWriter(java.lang.String,java.lang.String)	10	10	null

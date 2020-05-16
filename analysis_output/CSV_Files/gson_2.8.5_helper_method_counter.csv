@@ -90,8 +90,6 @@ com.google.gson.GsonBuilder	com.google.gson.GsonBuilder registerTypeAdapter(java
 com.google.gson.GsonBuilder	com.google.gson.GsonBuilder registerTypeHierarchyAdapter(java.lang.Class,java.lang.Object)	16	10	5
 com.google.gson.GsonBuilder	com.google.gson.GsonBuilder serializeSpecialFloatingPointValues()	7	7	null
 com.google.gson.GsonBuilder	com.google.gson.Gson create()	182	168	10
-com.google.gson.internal.$Gson$Types$WildcardTypeImpl	boolean equals(java.lang.Object)	2	2	null
-com.google.gson.internal.$Gson$Types$WildcardTypeImpl	int hashCode()	2	2	null
 com.google.gson.internal.LinkedHashTreeMap$KeySet	int size()	9	9	null
 com.google.gson.internal.LinkedHashTreeMap$KeySet	java.util.Iterator iterator()	7	6	1
 com.google.gson.internal.LinkedHashTreeMap$KeySet	boolean contains(java.lang.Object)	10	5	5
@@ -104,9 +102,6 @@ com.google.gson.internal.UnsafeAllocator$1	java.lang.Object newInstance(java.lan
 com.google.gson.internal.LinkedHashTreeMap$EntrySet	int size()	9	9	null
 com.google.gson.internal.LinkedHashTreeMap$EntrySet	java.util.Iterator iterator()	7	6	1
 com.google.gson.internal.LinkedHashTreeMap$EntrySet	boolean contains(java.lang.Object)	10	5	5
-com.google.gson.internal.LazilyParsedNumber	int intValue()	3	3	null
-com.google.gson.internal.LazilyParsedNumber	long longValue()	2	1	1
-com.google.gson.internal.LazilyParsedNumber	double doubleValue()	4	2	1
 com.google.gson.internal.LazilyParsedNumber	int hashCode()	2	1	1
 com.google.gson.internal.LinkedTreeMap$EntrySet	int size()	9	9	null
 com.google.gson.internal.LinkedTreeMap$EntrySet	java.util.Iterator iterator()	7	6	1
@@ -118,19 +113,7 @@ com.google.gson.internal.Excluder	com.google.gson.internal.Excluder withVersion(
 com.google.gson.internal.Excluder	boolean excludeField(java.lang.reflect.Field,boolean)	15	10	5
 com.google.gson.internal.Excluder	boolean excludeClass(java.lang.Class,boolean)	7	6	1
 com.google.gson.internal.UnsafeAllocator$3	java.lang.Object newInstance(java.lang.Class)	3	3	null
-com.google.gson.internal.LinkedTreeMap	int size()	13	11	2
-com.google.gson.internal.LinkedTreeMap	java.lang.Object get(java.lang.Object)	24	16	4
-com.google.gson.internal.LinkedTreeMap	boolean containsKey(java.lang.Object)	8	8	null
-com.google.gson.internal.LinkedTreeMap	java.lang.Object put(java.lang.Object,java.lang.Object)	39	18	9
-com.google.gson.internal.LinkedTreeMap	java.util.Set keySet()	5	5	null
-com.google.gson.internal.$Gson$Types$GenericArrayTypeImpl	boolean equals(java.lang.Object)	3	2	1
-com.google.gson.internal.$Gson$Types$GenericArrayTypeImpl	int hashCode()	3	2	1
 com.google.gson.internal.LinkedTreeMap$KeySet$1	java.lang.Object next()	15	10	3
-com.google.gson.internal.LinkedHashTreeMap	int size()	13	11	2
-com.google.gson.internal.LinkedHashTreeMap	java.lang.Object get(java.lang.Object)	24	16	4
-com.google.gson.internal.LinkedHashTreeMap	boolean containsKey(java.lang.Object)	8	8	null
-com.google.gson.internal.LinkedHashTreeMap	java.lang.Object put(java.lang.Object,java.lang.Object)	39	18	9
-com.google.gson.internal.LinkedHashTreeMap	java.util.Set keySet()	5	5	null
 com.google.gson.internal.LinkedHashTreeMap	com.google.gson.internal.LinkedHashTreeMap$Node[] doubleCapacity(com.google.gson.internal.LinkedHashTreeMap$Node[])	2	2	null
 com.google.gson.internal.UnsafeAllocator$4	java.lang.Object newInstance(java.lang.Class)	3	3	null
 com.google.gson.internal.bind.JsonTreeWriter	com.google.gson.JsonElement get()	8	8	null
@@ -167,8 +150,6 @@ com.google.gson.internal.LinkedTreeMap$KeySet	int size()	9	9	null
 com.google.gson.internal.LinkedTreeMap$KeySet	java.util.Iterator iterator()	7	6	1
 com.google.gson.internal.LinkedTreeMap$KeySet	boolean contains(java.lang.Object)	10	5	5
 com.google.gson.internal.Streams	com.google.gson.JsonElement parse(com.google.gson.stream.JsonReader)	2	1	1
-com.google.gson.internal.$Gson$Types$ParameterizedTypeImpl	boolean equals(java.lang.Object)	3	2	1
-com.google.gson.internal.$Gson$Types$ParameterizedTypeImpl	int hashCode()	3	2	1
 com.google.gson.internal.LinkedHashTreeMap$KeySet$1	java.lang.Object next()	15	10	3
 com.google.gson.JsonNull	com.google.gson.JsonNull deepCopy()	2	1	1
 com.google.gson.Gson	com.google.gson.TypeAdapter getAdapter(com.google.gson.reflect.TypeToken)	4	4	null

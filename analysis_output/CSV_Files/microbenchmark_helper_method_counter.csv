@@ -1,0 +1,2 @@
+Class	Helper Method Name	Total Number of Calls	Total Number of Distinct Test-Case Callers	Total Number of Multi-called Test Cases
+ca.uwaterloo.liang.MethodHelper	boolean isValidInteger(ca.uwaterloo.liang.MethodHelper,int,int)	2	2	null

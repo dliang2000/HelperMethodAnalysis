@@ -1,2 +1,0 @@
-org.apache.commons.io.input.ReversedLinesFileReaderTestParamBlockSize
-org.apache.commons.io.input.ReversedLinesFileReaderTestParamFile
