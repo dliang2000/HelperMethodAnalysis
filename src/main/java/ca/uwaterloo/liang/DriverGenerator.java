@@ -145,12 +145,12 @@ public class DriverGenerator {
 
     private static boolean isTestCase(SootMethod sm) {
         // JUnit 3
-        /*
-         * if (sm.getName().startsWith("test") && sm.getParameterCount() == 0 &&
-         * sm.getReturnType().toString() == "void") {
-         * System.out.println("Test case found: " + sm.getSubSignature()); return true;
-         * }
-         */
+
+        if (sm.getName().startsWith("test") && sm.getParameterCount() == 0 && sm.getReturnType().toString() == "void") {
+            System.out.println("Test case found: " + sm.getSubSignature());
+            return true;
+        }
+
         // JUnit 4+
         List<soot.tagkit.Tag> smTags = sm.getTags();
         soot.tagkit.VisibilityAnnotationTag tag = (soot.tagkit.VisibilityAnnotationTag) sm
