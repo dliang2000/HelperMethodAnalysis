@@ -9,7 +9,7 @@ CC_CLASS="ca.uwaterloo.liang.Main"
 BENCHMARK_PATH="$MACHINE_SPECIFIC_PATH/Benchmarks/microbenchmark"
 TARGET_PATH="target/classes"
 TARGET_TEST_PATH="target/test-classes"
-BENCHMARK="own_test"
+BENCHMARK="microbenchmark"
 DRIVER_PATH="ca.uwaterloo.liang.Driver"
 OUTPUT_PATH="$MACHINE_SPECIFIC_PATH/analysis_output"
 
